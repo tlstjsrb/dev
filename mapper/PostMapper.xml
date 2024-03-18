@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.study.domain.post.PostMapper">
+
+    <!-- tb_post 테이블 전체 컬럼 -->
+    <sql id="postColumns">
+        SEQ
+        , TiTLE
+        , CONTENTS
+        , REGIST_USER
+        , REGIST_DATE
+        , UPDATE_USERC
+        , UPDATE_DATE
+    </sql>
+
+
+    <!-- 게시글 저장 -->
+    <insert id="save" parameterType="com.study.domain.post.PostResponse" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO T_BOARD (
+        <include refid="postColumns" />
+        ) VALUES (
+        #{SEQ}
+        , #{TITLE}
+        , #{CONTENS}
+        , #{REGIST_USER}
+        , NOW()
+        , NULL
+        )
+    </insert>
+
+
+    <!-- 게시글 상세정보 조회 -->
+    <select id="findById" parameterType="long" resultType="com.study.domain.post.PostResponse">
+        SELECT
+        <include refid="postColumns" />
+        FROM
+        T_BOARD
+        WHERE
+        SEQ = #{value}
+    </select>
+
+
+    <!-- 게시글 수정 -->
+    <update id="update" parameterType="com.study.domain.post.PostRequest">
+        UPDATE T_BOARD
+        SET
+            REGIST_DATE = NOW()
+          , TITLE = #{title}
+          , CONTETS = #{content}
+          , REGIST_USER = #{writer}
+          , UPDATE_DATE = #{noticeYn}
+        WHERE
+            id = #{id}
+    </update>
+    <update id="count"></update>
+
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteById" parameterType="long">
+        UPDATE T_BOARD
+        SET
+            UPDATE_DATE = 1
+        WHERE
+            SEQ = #{id}
+    </delete>
+
+
+    <!-- 게시글 리스트 조회 -->
+    <select id="findAll" resultType="com.study.domain.post.PostResponse">
+        SELECT
+        <include refid="postColumns" />
+        FROM
+        T_BOARD
+        WHERE
+        UPDATE_DATE = 0
+        ORDER BY
+        SEQ DESC
+    </select>
+
+
+</mapper>
